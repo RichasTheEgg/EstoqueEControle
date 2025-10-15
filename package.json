@@ -1,15 +1,23 @@
 {
   "dependencies": {
+    "@radix-ui/react-dialog": "latest",
+    "@radix-ui/react-label": "latest",
+    "@radix-ui/react-select": "latest",
+    "@radix-ui/react-slot": "latest",
+    "@vercel/analytics": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "latest",
+    "geist": "latest",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
+    "next-themes": "latest",
     "react": "^19",
     "react-dom": "^19",
     "recharts": "latest",
     "tailwind-merge": "^2.5.5",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
