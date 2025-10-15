@@ -1,0 +1,119 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.headerLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.addButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.addButton:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.table {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tableContent {
+  overflow-x: auto;
+}
+
+.tableElement {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableElement thead {
+  background: #0f172a;
+}
+
+.tableElement th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableElement td {
+  padding: 1rem 1.5rem;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  border-top: 1px solid #334155;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badgeSuccess {
+  background: #14532d;
+  color: #86efac;
+}
+
+.badgeDanger {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #64748b;
+}
+
+.emptyState p {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}

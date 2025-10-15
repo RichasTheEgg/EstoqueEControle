@@ -4,10 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import styles from "./login.module.css"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -20,7 +17,6 @@ export default function LoginPage() {
     setLoading(true)
 
     // TODO: Conectar com sua API de autenticação
-    // Simulação de login por enquanto
     setTimeout(() => {
       if (email && password) {
         localStorage.setItem("user", JSON.stringify({ email, name: "Usuário" }))
@@ -31,42 +27,57 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Sistema de Estoque</CardTitle>
-          <CardDescription>Entre com suas credenciais para acessar</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <div className={styles.icon}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 7h-9M14 17H5M17 12H3" />
+              <circle cx="17" cy="7" r="3" />
+              <circle cx="7" cy="17" r="3" />
+              <circle cx="17" cy="17" r="3" />
+            </svg>
+          </div>
+          <h1 className={styles.title}>Sistema de Controle de Estoque</h1>
+          <p className={styles.subtitle}>Entre com suas credenciais para acessar o sistema</p>
+        </div>
+
+        <form onSubmit={handleLogin} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="password" className={styles.label}>
+              Senha
+            </label>
+            <input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <button type="submit" className={styles.button} disabled={loading}>
+            {loading ? "Entrando..." : "Entrar no Sistema"}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

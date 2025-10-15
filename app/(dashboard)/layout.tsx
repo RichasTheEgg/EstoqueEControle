@@ -5,6 +5,7 @@ import type React from "react"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Sidebar } from "@/components/layout/sidebar"
+import styles from "./dashboard-layout.module.css"
 
 export default function DashboardLayout({
   children,
@@ -21,9 +22,9 @@ export default function DashboardLayout({
   }, [router])
 
   return (
-    <div className="flex h-screen">
+    <div className={styles.container}>
       <Sidebar />
-      <main className="flex-1 overflow-y-auto bg-background p-8">{children}</main>
+      <main className={styles.main}>{children}</main>
     </div>
   )
 }

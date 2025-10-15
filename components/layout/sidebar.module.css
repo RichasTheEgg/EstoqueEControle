@@ -1,0 +1,130 @@
+/* Complete redesign with modern gradient sidebar */
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #13131a 0%, #1a1a24 100%);
+  border-right: 1px solid rgba(59, 130, 246, 0.15);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+.header {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logoIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
+}
+
+.logoText {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.nav {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1.125rem;
+  color: #a0a0b8;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.navItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: #3b82f6;
+  transform: scaleY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navItem:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.navItemActive {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.15) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.navItemActive::before {
+  transform: scaleY(1);
+}
+
+.navIcon {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navText {
+  flex: 1;
+}
+
+.footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.logoutButton {
+  width: 100%;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.logoutButton:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.logoutIcon {
+  font-size: 1.125rem;
+}

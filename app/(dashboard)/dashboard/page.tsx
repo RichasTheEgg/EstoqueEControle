@@ -1,9 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Package, TrendingDown, DollarSign, ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import styles from "./dashboard.module.css"
 
 interface Product {
   id: string
@@ -27,7 +26,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     // TODO: Buscar dados da sua API
-    // Dados de exemplo por enquanto
     const mockProducts: Product[] = [
       { id: "1", name: "Produto A", price: 50, quantity: 3, category: "Categoria 1" },
       { id: "2", name: "Produto B", price: 100, quantity: 15, category: "Categoria 2" },
@@ -62,105 +60,108 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Visão geral do seu estoque</p>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Dashboard</h1>
+        <p className={styles.subtitle}>Visão geral do seu estoque</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Produtos em Estoque</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{products.length}</div>
-            <p className="text-xs text-muted-foreground">Total de produtos cadastrados</p>
-          </CardContent>
-        </Card>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statHeader}>
+            <span className={styles.statLabel}>Produtos em Estoque</span>
+            <span className={styles.statIcon}>📦</span>
+          </div>
+          <div className={styles.statValue}>{products.length}</div>
+          <div className={styles.statDescription}>Total de produtos cadastrados</div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Estoque Baixo</CardTitle>
-            <TrendingDown className="h-4 w-4 text-destructive" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">{lowStockProducts.length}</div>
-            <p className="text-xs text-muted-foreground">Produtos com menos de 5 unidades</p>
-          </CardContent>
-        </Card>
+        <div className={`${styles.statCard} ${styles.statCardWarning}`}>
+          <div className={styles.statHeader}>
+            <span className={styles.statLabel}>Estoque Baixo</span>
+            <span className={styles.statIcon}>⚠️</span>
+          </div>
+          <div className={styles.statValue}>{lowStockProducts.length}</div>
+          <div className={styles.statDescription}>Produtos com menos de 5 unidades</div>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">R$ {totalValue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Valor total do estoque</p>
-          </CardContent>
-        </Card>
+        <div className={`${styles.statCard} ${styles.statCardSuccess}`}>
+          <div className={styles.statHeader}>
+            <span className={styles.statLabel}>Valor Total</span>
+            <span className={styles.statIcon}>💰</span>
+          </div>
+          <div className={styles.statValue}>R$ {totalValue.toFixed(2)}</div>
+          <div className={styles.statDescription}>Valor total do estoque</div>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Produtos com Estoque Baixo</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <div className={styles.contentGrid}>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>Produtos com Estoque Baixo</h2>
+          </div>
+          <div className={styles.cardContent}>
             {lowStockProducts.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nenhum produto com estoque baixo</p>
+              <p className={styles.emptyState}>Nenhum produto com estoque baixo</p>
             ) : (
-              <div className="space-y-3">
+              <div className={styles.productList}>
                 {lowStockProducts.map((product) => (
-                  <div key={product.id} className="flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-muted-foreground">{product.category}</p>
+                  <div key={product.id} className={styles.productItem}>
+                    <div className={styles.productInfo}>
+                      <p className={styles.productName}>{product.name}</p>
+                      <p className={styles.productCategory}>{product.category}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-destructive">{product.quantity} un.</p>
-                      <p className="text-sm text-muted-foreground">R$ {product.price.toFixed(2)}</p>
+                    <div className={styles.productDetails}>
+                      <p className={styles.productQuantity}>{product.quantity} un.</p>
+                      <p className={styles.productPrice}>R$ {product.price.toFixed(2)}</p>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Movimentações do Mês</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="hsl(var(--primary))" />
-              </BarChart>
-            </ResponsiveContainer>
-            <div className="mt-4 flex items-center justify-around">
-              <div className="flex items-center gap-2">
-                <ArrowUpCircle className="h-5 w-5 text-green-500" />
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>Movimentações do Mês</h2>
+          </div>
+          <div className={styles.cardContent}>
+            <div className={styles.chartContainer}>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={chartData}>
+                  <XAxis dataKey="name" stroke="#6b6b85" />
+                  <YAxis stroke="#6b6b85" />
+                  <Tooltip
+                    contentStyle={{
+                      background: "#1a1a24",
+                      border: "1px solid #2a2a3a",
+                      borderRadius: "0.5rem",
+                      color: "#ffffff",
+                    }}
+                  />
+                  <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className={styles.movementStats}>
+              <div className={styles.movementStat}>
+                <span className={styles.movementIcon}>⬆️</span>
                 <div>
-                  <p className="text-sm text-muted-foreground">Entradas</p>
-                  <p className="text-xl font-bold">{entries}</p>
+                  <p className={styles.movementLabel}>Entradas</p>
+                  <p className={styles.movementValue}>{entries}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <ArrowDownCircle className="h-5 w-5 text-red-500" />
+              <div className={styles.movementStat}>
+                <span className={styles.movementIcon}>⬇️</span>
                 <div>
-                  <p className="text-sm text-muted-foreground">Saídas</p>
-                  <p className="text-xl font-bold">{exits}</p>
+                  <p className={styles.movementLabel}>Saídas</p>
+                  <p className={styles.movementValue}>{exits}</p>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )

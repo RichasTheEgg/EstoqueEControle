@@ -1,11 +1,9 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Plus, Search, Pencil, Trash2 } from "lucide-react"
-import { ProductDialog } from "@/components/products/product-dialog"
+import styles from "./products.module.css"
 
 interface Product {
   id: string
@@ -20,6 +18,7 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [formData, setFormData] = useState({ name: "", price: "", quantity: "", category: "" })
 
   useEffect(() => {
     // TODO: Buscar produtos da sua API
@@ -37,21 +36,37 @@ export default function ProductsPage() {
       product.category.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleSaveProduct = (product: Omit<Product, "id"> | Product) => {
-    if ("id" in product) {
+  const handleSaveProduct = (e: React.FormEvent) => {
+    e.preventDefault()
+    const productData = {
+      name: formData.name,
+      price: Number.parseFloat(formData.price),
+      quantity: Number.parseInt(formData.quantity),
+      category: formData.category,
+    }
+
+    if (editingProduct) {
       // TODO: Atualizar produto na sua API
-      setProducts(products.map((p) => (p.id === product.id ? product : p)))
+      setProducts(products.map((p) => (p.id === editingProduct.id ? { ...productData, id: editingProduct.id } : p)))
     } else {
       // TODO: Criar produto na sua API
-      const newProduct = { ...product, id: Date.now().toString() }
+      const newProduct = { ...productData, id: Date.now().toString() }
       setProducts([...products, newProduct])
     }
+
     setDialogOpen(false)
     setEditingProduct(null)
+    setFormData({ name: "", price: "", quantity: "", category: "" })
   }
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product)
+    setFormData({
+      name: product.name,
+      price: product.price.toString(),
+      quantity: product.quantity.toString(),
+      category: product.category,
+    })
     setDialogOpen(true)
   }
 
@@ -64,79 +79,137 @@ export default function ProductsPage() {
 
   const handleNewProduct = () => {
     setEditingProduct(null)
+    setFormData({ name: "", price: "", quantity: "", category: "" })
     setDialogOpen(true)
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className={styles.container}>
+      <div className={styles.header}>
         <div>
-          <h1 className="text-3xl font-bold">Produtos</h1>
-          <p className="text-muted-foreground">Gerencie seu catálogo de produtos</p>
+          <h1 className={styles.title}>Produtos</h1>
+          <p className={styles.subtitle}>Gerencie seu catálogo de produtos</p>
         </div>
-        <Button onClick={handleNewProduct}>
-          <Plus className="mr-2 h-4 w-4" />
+        <button onClick={handleNewProduct} className={styles.addButton}>
+          <span className={styles.buttonIcon}>➕</span>
           Novo Produto
-        </Button>
+        </button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Buscar produtos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {filteredProducts.length === 0 ? (
-              <p className="text-center text-sm text-muted-foreground py-8">Nenhum produto encontrado</p>
-            ) : (
-              filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="flex items-center justify-between rounded-lg border p-4 hover:bg-accent/50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{product.name}</h3>
-                    <p className="text-sm text-muted-foreground">{product.category}</p>
+      <div className={styles.card}>
+        <div className={styles.searchContainer}>
+          <span className={styles.searchIcon}>🔍</span>
+          <input
+            type="text"
+            placeholder="Buscar produtos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={styles.searchInput}
+          />
+        </div>
+
+        <div className={styles.productList}>
+          {filteredProducts.length === 0 ? (
+            <p className={styles.emptyState}>Nenhum produto encontrado</p>
+          ) : (
+            filteredProducts.map((product) => (
+              <div key={product.id} className={styles.productItem}>
+                <div className={styles.productInfo}>
+                  <h3 className={styles.productName}>{product.name}</h3>
+                  <p className={styles.productCategory}>{product.category}</p>
+                </div>
+                <div className={styles.productStats}>
+                  <div className={styles.productStat}>
+                    <span className={styles.productStatLabel}>Preço</span>
+                    <span className={styles.productStatValue}>R$ {product.price.toFixed(2)}</span>
                   </div>
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Preço</p>
-                      <p className="font-semibold">R$ {product.price.toFixed(2)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Quantidade</p>
-                      <p className="font-semibold">{product.quantity} un.</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDeleteProduct(product.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className={styles.productStat}>
+                    <span className={styles.productStatLabel}>Quantidade</span>
+                    <span className={styles.productStatValue}>{product.quantity} un.</span>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                <div className={styles.productActions}>
+                  <button onClick={() => handleEditProduct(product)} className={styles.actionButton}>
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className={`${styles.actionButton} ${styles.actionButtonDanger}`}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
 
-      <ProductDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        product={editingProduct}
-        onSave={handleSaveProduct}
-      />
+      {dialogOpen && (
+        <div className={styles.modal} onClick={() => setDialogOpen(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>{editingProduct ? "Editar Produto" : "Novo Produto"}</h2>
+              <button onClick={() => setDialogOpen(false)} className={styles.modalClose}>
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleSaveProduct} className={styles.form}>
+              <div className={styles.field}>
+                <label className={styles.label}>Nome</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className={styles.input}
+                  required
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Categoria</label>
+                <input
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className={styles.input}
+                  required
+                />
+              </div>
+              <div className={styles.fieldRow}>
+                <div className={styles.field}>
+                  <label className={styles.label}>Preço</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    className={styles.input}
+                    required
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label className={styles.label}>Quantidade</label>
+                  <input
+                    type="number"
+                    value={formData.quantity}
+                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    className={styles.input}
+                    required
+                  />
+                </div>
+              </div>
+              <div className={styles.modalActions}>
+                <button type="button" onClick={() => setDialogOpen(false)} className={styles.cancelButton}>
+                  Cancelar
+                </button>
+                <button type="submit" className={styles.submitButton}>
+                  {editingProduct ? "Salvar" : "Criar"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
