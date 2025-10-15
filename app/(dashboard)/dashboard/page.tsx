@@ -2,47 +2,29 @@
 
 import { useEffect, useState } from "react"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { getProducts, getMovements, type Product, type Movement } from "@/lib/firestore"
 import styles from "./dashboard.module.css"
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  quantity: number
-  category: string
-}
-
-interface Movement {
-  id: string
-  productId: string
-  type: "entry" | "exit"
-  quantity: number
-  date: string
-}
 
 export default function DashboardPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [movements, setMovements] = useState<Movement[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // TODO: Buscar dados da sua API
-    const mockProducts: Product[] = [
-      { id: "1", name: "Produto A", price: 50, quantity: 3, category: "Categoria 1" },
-      { id: "2", name: "Produto B", price: 100, quantity: 15, category: "Categoria 2" },
-      { id: "3", name: "Produto C", price: 75, quantity: 8, category: "Categoria 1" },
-    ]
+    const fetchData = async () => {
+      const [productsData, movementsData] = await Promise.all([
+        getProducts(),
+        getMovements()
+      ])
+      setProducts(productsData)
+      setMovements(movementsData)
+      setLoading(false)
+    }
 
-    const mockMovements: Movement[] = [
-      { id: "1", productId: "1", type: "entry", quantity: 10, date: "2025-03-01" },
-      { id: "2", productId: "2", type: "exit", quantity: 5, date: "2025-03-02" },
-      { id: "3", productId: "1", type: "exit", quantity: 7, date: "2025-03-03" },
-    ]
-
-    setProducts(mockProducts)
-    setMovements(mockMovements)
+    fetchData()
   }, [])
 
-  const lowStockProducts = products.filter((p) => p.quantity < 5)
+  const lowStockProducts = products.filter((p) => p.quantity < p.maxStock * 0.2)
   const totalValue = products.reduce((sum, p) => sum + p.price * p.quantity, 0)
 
   const currentMonth = new Date().getMonth()
@@ -58,6 +40,15 @@ export default function DashboardPage() {
     { name: "Entradas", value: entries },
     { name: "Saídas", value: exits },
   ]
+
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <div className={styles.spinner}></div>
+        <p>Carregando dados...</p>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.container}>
@@ -82,7 +73,7 @@ export default function DashboardPage() {
             <span className={styles.statIcon}>⚠️</span>
           </div>
           <div className={styles.statValue}>{lowStockProducts.length}</div>
-          <div className={styles.statDescription}>Produtos com menos de 5 unidades</div>
+          <div className={styles.statDescription}>Produtos com menos de 20% do estoque</div>
         </div>
 
         <div className={`${styles.statCard} ${styles.statCardSuccess}`}>

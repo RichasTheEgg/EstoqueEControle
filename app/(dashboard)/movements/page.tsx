@@ -7,131 +7,91 @@ import { Plus, ArrowUpCircle, ArrowDownCircle } from "lucide-react"
 import { MovementDialog } from "@/components/movements/movement-dialog"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-
-interface Product {
-  id: string
-  name: string
-}
-
-interface Movement {
-  id: string
-  productId: string
-  productName: string
-  type: "entry" | "exit"
-  quantity: number
-  date: string
-}
+import { getMovements, getProducts, type Movement, type Product } from "@/lib/firestore"
+import styles from "./movements.module.css"
 
 export default function MovementsPage() {
   const [movements, setMovements] = useState<Movement[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // TODO: Buscar movimentações e produtos da sua API
-    const mockProducts: Product[] = [
-      { id: "1", name: "Produto A" },
-      { id: "2", name: "Produto B" },
-      { id: "3", name: "Produto C" },
-    ]
-
-    const mockMovements: Movement[] = [
-      {
-        id: "1",
-        productId: "1",
-        productName: "Produto A",
-        type: "entry",
-        quantity: 10,
-        date: "2025-03-01T10:00:00",
-      },
-      {
-        id: "2",
-        productId: "2",
-        productName: "Produto B",
-        type: "exit",
-        quantity: 5,
-        date: "2025-03-02T14:30:00",
-      },
-      {
-        id: "3",
-        productId: "1",
-        productName: "Produto A",
-        type: "exit",
-        quantity: 7,
-        date: "2025-03-03T09:15:00",
-      },
-    ]
-
-    setProducts(mockProducts)
-    setMovements(mockMovements)
+    fetchData()
   }, [])
 
-  const handleSaveMovement = (movement: Omit<Movement, "id" | "productName">) => {
-    // TODO: Criar movimentação na sua API
-    const product = products.find((p) => p.id === movement.productId)
-    const newMovement = {
-      ...movement,
-      id: Date.now().toString(),
-      productName: product?.name || "",
-    }
-    setMovements([newMovement, ...movements])
-    setDialogOpen(false)
+  const fetchData = async () => {
+    setLoading(true)
+    const [movementsData, productsData] = await Promise.all([
+      getMovements(),
+      getProducts()
+    ])
+    setMovements(movementsData)
+    setProducts(productsData)
+    setLoading(false)
+  }
+
+  const handleMovementAdded = () => {
+    fetchData()
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <div className={styles.spinner}></div>
+        <p>Carregando movimentações...</p>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className={styles.container}>
+      <div className={styles.header}>
         <div>
-          <h1 className="text-3xl font-bold">Movimentações</h1>
-          <p className="text-muted-foreground">Registre entradas e saídas de estoque</p>
+          <h1 className={styles.title}>Movimentações</h1>
+          <p className={styles.subtitle}>Registre entradas e saídas de estoque</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+        <button className={styles.addButton} onClick={() => setDialogOpen(true)}>
+          <Plus size={20} />
           Nova Movimentação
-        </Button>
+        </button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Histórico de Movimentações</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {movements.length === 0 ? (
-              <p className="text-center text-sm text-muted-foreground py-8">Nenhuma movimentação registrada</p>
-            ) : (
-              movements.map((movement) => (
-                <div key={movement.id} className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="flex items-center gap-4">
-                    {movement.type === "entry" ? (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
-                        <ArrowUpCircle className="h-5 w-5 text-green-500" />
-                      </div>
-                    ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
-                        <ArrowDownCircle className="h-5 w-5 text-red-500" />
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="font-semibold">{movement.productName}</h3>
-                      <p className="text-sm text-muted-foreground">
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <h2 className={styles.cardTitle}>Histórico de Movimentações</h2>
+        </div>
+        <div className={styles.cardContent}>
+          {movements.length === 0 ? (
+            <p className={styles.emptyState}>Nenhuma movimentação registrada</p>
+          ) : (
+            <div className={styles.movementList}>
+              {movements.map((movement) => (
+                <div key={movement.id} className={styles.movementItem}>
+                  <div className={styles.movementLeft}>
+                    <div className={`${styles.movementIcon} ${movement.type === "entry" ? styles.entry : styles.exit}`}>
+                      {movement.type === "entry" ? "⬆️" : "⬇️"}
+                    </div>
+                    <div className={styles.movementInfo}>
+                      <h3>{movement.productName}</h3>
+                      <p>
                         {movement.type === "entry" ? "Entrada" : "Saída"} de {movement.quantity} unidades
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">
+                  <div className={styles.movementRight}>
+                    <p className={styles.movementDate}>
                       {format(new Date(movement.date), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
                     </p>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
-      <MovementDialog open={dialogOpen} onOpenChange={setDialogOpen} products={products} onSave={handleSaveMovement} />
+      <MovementDialog open={dialogOpen} onOpenChange={setDialogOpen} products={products} onMovementAdded={handleMovementAdded} />
     </div>
   )
 }

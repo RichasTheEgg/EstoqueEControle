@@ -4,25 +4,38 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signIn } from "@/lib/auth"
-import styles from "./login.module.css"
+import { signUp } from "@/lib/auth"
+import styles from "../login/login.module.css"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
-    const { user, error: authError } = await signIn(email, password)
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem")
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres")
+      setLoading(false)
+      return
+    }
+
+    const { user, error: authError } = await signUp(email, password)
 
     if (authError) {
-      setError("Email ou senha incorretos")
+      setError("Erro ao criar conta. Tente novamente.")
       setLoading(false)
       return
     }
@@ -46,10 +59,10 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className={styles.title}>Sistema de Controle de Estoque</h1>
-          <p className={styles.subtitle}>Entre com suas credenciais para acessar o sistema</p>
+          <p className={styles.subtitle}>Crie sua conta para acessar o sistema</p>
         </div>
 
-        <form onSubmit={handleLogin} className={styles.form}>
+        <form onSubmit={handleSignup} className={styles.form}>
           <div className={styles.field}>
             <label htmlFor="email" className={styles.label}>
               Email
@@ -80,6 +93,21 @@ export default function LoginPage() {
             />
           </div>
 
+          <div className={styles.field}>
+            <label htmlFor="confirmPassword" className={styles.label}>
+              Confirmar Senha
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className={styles.input}
+              required
+            />
+          </div>
+
           {error && (
             <div className={styles.error}>
               {error}
@@ -87,12 +115,12 @@ export default function LoginPage() {
           )}
 
           <button type="submit" className={styles.button} disabled={loading}>
-            {loading ? "Entrando..." : "Entrar no Sistema"}
+            {loading ? "Criando conta..." : "Criar Conta"}
           </button>
         </form>
 
         <div className={styles.signupLink}>
-          <p>Não tem uma conta? <a href="/signup">Criar conta</a></p>
+          <p>Já tem uma conta? <a href="/login">Entrar</a></p>
         </div>
       </div>
     </div>

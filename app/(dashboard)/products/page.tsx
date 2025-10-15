@@ -3,32 +3,28 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
+import { getProducts, addProduct, updateProduct, deleteProduct, type Product } from "@/lib/firestore"
 import styles from "./products.module.css"
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  quantity: number
-  category: string
-}
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [formData, setFormData] = useState({ name: "", price: "", quantity: "", category: "" })
+  const [formData, setFormData] = useState({ name: "", price: "", quantity: "", maxStock: "", category: "" })
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    // TODO: Buscar produtos da sua API
-    const mockProducts: Product[] = [
-      { id: "1", name: "Produto A", price: 50, quantity: 3, category: "Categoria 1" },
-      { id: "2", name: "Produto B", price: 100, quantity: 15, category: "Categoria 2" },
-      { id: "3", name: "Produto C", price: 75, quantity: 8, category: "Categoria 1" },
-    ]
-    setProducts(mockProducts)
+    fetchProducts()
   }, [])
+
+  const fetchProducts = async () => {
+    setLoading(true)
+    const data = await getProducts()
+    setProducts(data)
+    setLoading(false)
+  }
 
   const filteredProducts = products.filter(
     (product) =>
@@ -36,27 +32,34 @@ export default function ProductsPage() {
       product.category.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleSaveProduct = (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSaving(true)
+
     const productData = {
       name: formData.name,
       price: Number.parseFloat(formData.price),
       quantity: Number.parseInt(formData.quantity),
+      maxStock: Number.parseInt(formData.maxStock),
       category: formData.category,
     }
 
     if (editingProduct) {
-      // TODO: Atualizar produto na sua API
-      setProducts(products.map((p) => (p.id === editingProduct.id ? { ...productData, id: editingProduct.id } : p)))
+      const success = await updateProduct(editingProduct.id, productData)
+      if (success) {
+        await fetchProducts()
+      }
     } else {
-      // TODO: Criar produto na sua API
-      const newProduct = { ...productData, id: Date.now().toString() }
-      setProducts([...products, newProduct])
+      const newProduct = await addProduct(productData)
+      if (newProduct) {
+        await fetchProducts()
+      }
     }
 
+    setSaving(false)
     setDialogOpen(false)
     setEditingProduct(null)
-    setFormData({ name: "", price: "", quantity: "", category: "" })
+    setFormData({ name: "", price: "", quantity: "", maxStock: "", category: "" })
   }
 
   const handleEditProduct = (product: Product) => {
@@ -65,21 +68,24 @@ export default function ProductsPage() {
       name: product.name,
       price: product.price.toString(),
       quantity: product.quantity.toString(),
+      maxStock: product.maxStock.toString(),
       category: product.category,
     })
     setDialogOpen(true)
   }
 
-  const handleDeleteProduct = (id: string) => {
-    // TODO: Deletar produto na sua API
+  const handleDeleteProduct = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este produto?")) {
-      setProducts(products.filter((p) => p.id !== id))
+      const success = await deleteProduct(id)
+      if (success) {
+        await fetchProducts()
+      }
     }
   }
 
   const handleNewProduct = () => {
     setEditingProduct(null)
-    setFormData({ name: "", price: "", quantity: "", category: "" })
+    setFormData({ name: "", price: "", quantity: "", maxStock: "", category: "" })
     setDialogOpen(true)
   }
 
@@ -109,7 +115,12 @@ export default function ProductsPage() {
         </div>
 
         <div className={styles.productList}>
-          {filteredProducts.length === 0 ? (
+          {loading ? (
+            <div className={styles.loading}>
+              <div className={styles.spinner}></div>
+              <p>Carregando produtos...</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
             <p className={styles.emptyState}>Nenhum produto encontrado</p>
           ) : (
             filteredProducts.map((product) => (
@@ -197,6 +208,16 @@ export default function ProductsPage() {
                     required
                   />
                 </div>
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Estoque Máximo</label>
+                <input
+                  type="number"
+                  value={formData.maxStock}
+                  onChange={(e) => setFormData({ ...formData, maxStock: e.target.value })}
+                  className={styles.input}
+                  required
+                />
               </div>
               <div className={styles.modalActions}>
                 <button type="button" onClick={() => setDialogOpen(false)} className={styles.cancelButton}>

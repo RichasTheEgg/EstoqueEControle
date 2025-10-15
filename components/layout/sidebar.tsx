@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { logout } from "@/lib/auth"
 import styles from "./sidebar.module.css"
 
 const navigation = [
@@ -14,9 +15,11 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
 
-  const handleLogout = () => {
-    localStorage.removeItem("user")
-    router.push("/login")
+  const handleLogout = async () => {
+    const { error } = await logout()
+    if (!error) {
+      router.push("/login")
+    }
   }
 
   return (

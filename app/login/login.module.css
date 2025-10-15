@@ -167,3 +167,39 @@
   cursor: not-allowed;
   transform: none;
 }
+
+.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.signupLink {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.signupLink p {
+  color: #a0a0b8;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.signupLink a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.signupLink a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
