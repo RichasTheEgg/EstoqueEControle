@@ -1,0 +1,41 @@
+Disciplina: Computação Gráfica
+Turma: 3DSA
+Nome do Aluno: Pedro Henrique da Silva Rodacinski
+
+Título do Trabalho: Protótipos das Telas para o Sistema de Controle de Estoque
+
+Descrição do Projeto:
+O projeto consiste no desenvolvimento de protótipos de telas para um sistema de controle de estoque, que será utilizado em um trabalho de Banco de Dados. O sistema é uma aplicação web desenvolvida com Next.js e Firebase, destinada a gerenciar inventários de produtos em tempo real.
+
+O que é? É um sistema de controle de estoque que permite aos usuários cadastrar produtos, registrar movimentações de entrada e saída, visualizar estatísticas em um dashboard e manter um controle preciso do inventário.
+
+Finalidade: A finalidade principal é facilitar o gerenciamento de estoques, evitando faltas de produtos ou excessos desnecessários, além de fornecer insights através de dados para tomada de decisões. O sistema visa otimizar processos de inventário, reduzindo erros manuais e melhorando a eficiência operacional.
+
+Principais Recursos:
+- Autenticação de usuários (login e logout) com Firebase Auth.
+- CRUD completo de produtos: criar, ler, atualizar e deletar produtos, com campos como nome, categoria, preço, quantidade e estoque máximo.
+- Registro de movimentações: entradas e saídas de produtos, atualizando automaticamente a quantidade em estoque.
+- Dashboard com estatísticas: visualização de produtos em estoque, produtos com estoque baixo, valor total do inventário e gráfico de movimentações mensais.
+- Interface responsiva para desktop e mobile (protótipos elaborados para ambas as plataformas, mas focando na etapa 1 para desktop).
+
+Telas Principais (para Desktop):
+As telas foram elaboradas considerando uma interface limpa e intuitiva, com foco em usabilidade. Informações não essenciais, como datas de criação/atualização automática, não são exibidas nas telas principais para evitar sobrecarga visual.
+
+1. Tela de Login:
+   - Funcionalidades: Campo para inserir email e senha, botão de "Entrar no Sistema". Exibe mensagem de erro em caso de credenciais incorretas. Link para criar nova conta. Ícone representativo do sistema no cabeçalho.
+   - Layout: Centralizado, com cartão contendo formulário, título "Sistema de Controle de Estoque" e subtítulo explicativo.
+
+2. Dashboard (Visão Geral):
+   - Funcionalidades: Exibe estatísticas principais em cards: total de produtos em estoque, produtos com estoque baixo (menos de 20% do máximo), valor total do inventário. Gráfico de barras mostrando entradas e saídas do mês atual. Lista de produtos com estoque baixo, com nome, categoria, quantidade e preço. Sidebar de navegação com links para Dashboard, Produtos e Movimentações.
+   - Layout: Header com título e subtítulo, grid de estatísticas, grid de conteúdo com lista de produtos e gráfico.
+
+3. Tela de Produtos:
+   - Funcionalidades: Lista todos os produtos cadastrados, com opções para adicionar novo produto (botão "Novo Produto"), editar ou deletar produtos existentes. Diálogo modal para criar/editar produto com campos: nome, categoria, preço e quantidade. Sidebar de navegação.
+   - Layout: Tabela ou lista de produtos, botões de ação, modal para formulários.
+
+4. Tela de Movimentações:
+   - Funcionalidades: Lista todas as movimentações registradas, com opções para adicionar nova movimentação (botão "Nova Movimentação"). Diálogo modal para registrar entrada ou saída, selecionando produto, tipo (entrada/saída) e quantidade. Atualiza automaticamente a quantidade do produto. Sidebar de navegação.
+   - Layout: Lista de movimentações, botões de ação, modal com formulário e botões de tipo (Entrada/Saída).
+
+Observações:
+Este trabalho representa a Etapa 1 do projeto, focada nos protótipos para desktop. Os protótipos foram desenvolvidos considerando boas práticas de design, com layouts responsivos e acessíveis. Para a Etapa 2 (mobile), os protótipos serão adaptados para dispositivos móveis, priorizando toque e navegação simplificada.
